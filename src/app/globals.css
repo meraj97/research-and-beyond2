@@ -1,0 +1,597 @@
+@import 'tailwindcss';
+
+/* Dark theme = the "dark" class on <html> (set by the theme button, see ThemeToggle.tsx) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------------------------------------------------------------------------
+   1. Theme colours
+   Light values are the default. ".dark" swaps them. ".theme-light" pins a part of
+   the site (the admin panel) to the light values even when the visitor chose dark.
+   --------------------------------------------------------------------------- */
+:root {
+  --rb-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+:root,
+.theme-light {
+  color-scheme: light;
+  --rb-bg: #ffffff;
+  --rb-bg-alt: #f2f5fc;
+  --rb-surface: #ffffff;
+  --rb-surface-2: #eef2fb;
+  --rb-text: #0d1636;
+  --rb-muted: #56617f;
+  --rb-line: #dde3f0;
+  --rb-heading: #0a1c55;
+  --rb-accent: #1c5fe8;
+  --rb-accent-strong: #154bbd;
+  --rb-danger: #c4183c;
+  --rb-danger-soft: #fdecef;
+  --rb-header: rgb(255 255 255 / 0.86);
+  --rb-shadow: 0 22px 48px -26px rgb(10 28 85 / 0.38);
+  --rb-shadow-soft: 0 10px 30px -18px rgb(10 28 85 / 0.28);
+  --rb-stroke-text: #b3bfdc;
+  --rb-grad-a: #025afc;
+  --rb-grad-b: #8425e0;
+}
+
+.dark {
+  color-scheme: dark;
+  --rb-bg: #050b24;
+  --rb-bg-alt: #081130;
+  --rb-surface: #0d1942;
+  --rb-surface-2: #13214f;
+  --rb-text: #e7ecfb;
+  --rb-muted: #9da9cb;
+  --rb-line: #1f2d60;
+  --rb-heading: #ffffff;
+  --rb-accent: #6ea4ff;
+  --rb-accent-strong: #9cc0ff;
+  --rb-danger: #ff8fa3;
+  --rb-danger-soft: rgb(255 61 110 / 0.14);
+  --rb-header: rgb(5 11 36 / 0.82);
+  --rb-shadow: 0 22px 48px -26px rgb(0 0 0 / 0.7);
+  --rb-shadow-soft: 0 10px 30px -18px rgb(0 0 0 / 0.6);
+  --rb-stroke-text: #33437c;
+  --rb-grad-a: #13d5fb;
+  --rb-grad-b: #b07bff;
+}
+
+@theme inline {
+  /* fixed navy, used by the sections that stay dark in both themes */
+  --color-navy-950: #050c26;
+  --color-navy-900: #0a1a4f;
+  --color-navy-800: #11267a;
+  --color-navy-700: #1b3594;
+  --color-deep: #030718;
+
+  /* colours taken from the logo */
+  --color-brand-cyan: #13d5fb;
+  --color-brand-sky: #0299fa;
+  --color-brand-blue: #025afc;
+  --color-brand-violet: #8425e0;
+  --color-brand-amber: #f5b113;
+  --color-brand-orange: #f58a14;
+  --color-brand-flame: #fc5f2c;
+
+  /* theme-aware colours */
+  --color-bg: var(--rb-bg);
+  --color-paper: var(--rb-bg-alt);
+  --color-surface: var(--rb-surface);
+  --color-surface-2: var(--rb-surface-2);
+  --color-ink: var(--rb-text);
+  --color-muted: var(--rb-muted);
+  --color-line: var(--rb-line);
+  --color-heading: var(--rb-heading);
+  --color-signal: var(--rb-accent);
+  --color-signal-600: var(--rb-accent-strong);
+  --color-danger: var(--rb-danger);
+  --color-danger-soft: var(--rb-danger-soft);
+
+  --font-sans: var(--font-hind), 'Hind Siliguri', 'Noto Sans Bengali', system-ui, sans-serif;
+  --font-display: var(--font-sora), 'Sora', var(--font-hind), 'Hind Siliguri', 'Noto Sans Bengali', sans-serif;
+
+}
+
+/* ---------------------------------------------------------------------------
+   2. Base
+   --------------------------------------------------------------------------- */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-bg font-sans text-ink antialiased;
+    line-height: 1.7;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+  :focus-visible {
+    outline: 3px solid #f58a14;
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: rgb(245 138 20 / 0.3);
+  }
+  /* brief colour fade while the theme button is switching themes */
+  html.theme-switching *,
+  html.theme-switching *::before,
+  html.theme-switching *::after {
+    transition:
+      background-color 0.35s ease,
+      border-color 0.35s ease,
+      color 0.35s ease,
+      fill 0.35s ease !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   3. Buttons and form fields
+   --------------------------------------------------------------------------- */
+@utility btn {
+  @apply relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-6 py-3 text-[0.95rem] font-semibold transition-[transform,box-shadow,background-color,border-color,color] duration-200 disabled:cursor-not-allowed disabled:opacity-60;
+}
+@utility btn-primary {
+  @apply btn text-navy-950;
+  background-image: linear-gradient(120deg, #f8c23a 0%, #f58a14 52%, #fc6a34 100%);
+  box-shadow: 0 10px 24px -12px rgb(245 138 20 / 0.75);
+}
+@utility btn-ghost-light {
+  @apply btn border border-white/30 text-white hover:border-white hover:bg-white/8;
+}
+@utility btn-outline {
+  @apply btn border border-line text-heading hover:border-signal hover:text-signal;
+}
+@utility field-label {
+  @apply mb-1.5 block text-sm font-semibold text-ink;
+}
+@utility field-input {
+  @apply w-full rounded-lg border border-line bg-surface px-3.5 py-2.5 text-[0.95rem] text-ink outline-none transition-[border-color,box-shadow] duration-200 placeholder:text-muted/70 focus:border-signal focus:ring-4 focus:ring-signal/15;
+}
+@utility field-error {
+  @apply mt-1 text-sm text-danger;
+}
+/* gradient text in the logo's blue → violet (cyan → violet on dark) */
+@utility text-brand-gradient {
+  background-image: linear-gradient(100deg, var(--rb-grad-a), var(--rb-grad-b));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+@utility text-hero-gradient {
+  background-image: linear-gradient(100deg, #13d5fb 0%, #5aa2ff 48%, #b889ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* These rules are deliberately NOT inside a Tailwind layer, so their hover and motion states win over utility classes. */
+/* primary button: lift + light sweep on hover */
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 30px -12px rgb(245 138 20 / 0.85);
+}
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.55) 50%, transparent 65%);
+  transform: translateX(-120%);
+  pointer-events: none;
+}
+.btn-primary:hover:not(:disabled)::after {
+  transform: translateX(120%);
+  transition: transform 0.7s var(--rb-ease);
+}
+.btn .btn-arrow {
+  transition: transform 0.25s var(--rb-ease);
+}
+.btn:hover .btn-arrow {
+  transform: translateX(4px);
+}
+
+/* --- "pages" mark from the logo, used beside section headings --- */
+.fan {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 1.35rem;
+  transform: skewX(-18deg);
+}
+.fan i {
+  display: block;
+  width: 5px;
+  border-radius: 2px;
+  transform-origin: bottom;
+}
+.fan i:nth-child(1) {
+  height: 55%;
+  background: #fc5f2c;
+}
+.fan i:nth-child(2) {
+  height: 78%;
+  background: #f58a14;
+}
+.fan i:nth-child(3) {
+  height: 100%;
+  background: #f5b113;
+}
+
+/* --- backgrounds for the sections that stay dark --- */
+.dark-band {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: #fff;
+  background: linear-gradient(155deg, #050c26 0%, #0a1a4f 62%, #1a1466 100%);
+}
+.grid-lines {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.055) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse 80% 70% at 60% 30%, #000 20%, transparent 78%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 60% 30%, #000 20%, transparent 78%);
+}
+.aurora {
+  position: absolute;
+  z-index: -1;
+  border-radius: 9999px;
+  filter: blur(90px);
+  opacity: 0.55;
+  will-change: transform;
+  animation: rb-drift 18s ease-in-out infinite alternate;
+}
+
+/* --- card that lights up under the pointer (SpotlightCard.tsx sets --mx / --my) --- */
+.spotlight {
+  position: relative;
+  isolation: isolate;
+  transition:
+    transform 0.35s var(--rb-ease),
+    box-shadow 0.35s var(--rb-ease),
+    border-color 0.35s ease;
+}
+.spotlight::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), rgb(36 114 255 / 0.16), transparent 62%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+.spotlight::after {
+  content: '';
+  position: absolute;
+  left: 1.75rem;
+  right: 1.75rem;
+  top: 0;
+  height: 3px;
+  border-radius: 0 0 4px 4px;
+  background: linear-gradient(90deg, #13d5fb, #025afc, #8425e0);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s var(--rb-ease);
+}
+.spotlight:hover,
+.spotlight:focus-within {
+  transform: translateY(-6px);
+  box-shadow: var(--rb-shadow);
+  border-color: color-mix(in srgb, var(--rb-accent) 45%, var(--rb-line));
+}
+.spotlight:hover::before,
+.spotlight:focus-within::before {
+  opacity: 1;
+}
+.spotlight:hover::after,
+.spotlight:focus-within::after {
+  transform: scaleX(1);
+}
+.spotlight .icon-tile {
+  transition: transform 0.45s var(--rb-ease);
+}
+.spotlight:hover .icon-tile {
+  transform: rotate(-6deg) scale(1.08);
+}
+
+/* sideways slide-in animations must never widen the page */
+.page-clip {
+  overflow-x: hidden;
+}
+@supports (overflow: clip) {
+  .page-clip {
+    overflow-x: clip;
+  }
+}
+.card-shadow {
+  box-shadow: var(--rb-shadow-soft);
+}
+.lift {
+  transition:
+    transform 0.35s var(--rb-ease),
+    box-shadow 0.35s var(--rb-ease),
+    border-color 0.35s ease;
+}
+.lift:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--rb-shadow);
+}
+
+/* outlined text in the moving strip */
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.2px var(--rb-stroke-text);
+}
+
+/* hero figure tilt (Tilt.tsx sets --rx / --ry) */
+.tilt {
+  transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 0.25s ease-out;
+  transform-style: preserve-3d;
+}
+
+/* FAQ accordion body: animates height without knowing it */
+.accordion-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s var(--rb-ease);
+}
+.accordion-body[data-open='true'] {
+  grid-template-rows: 1fr;
+}
+.accordion-body > div {
+  overflow: hidden;
+}
+
+/* ---------------------------------------------------------------------------
+   4. Motion
+   --------------------------------------------------------------------------- */
+@keyframes rb-drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(6%, -8%, 0) scale(1.18);
+  }
+}
+@keyframes rb-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 26px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes rb-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translate3d(0, 18px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes rb-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -10px, 0);
+  }
+}
+@keyframes rb-spread {
+  from {
+    transform: translateX(var(--from));
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes rb-scan {
+  0% {
+    transform: translateX(0);
+    opacity: 0;
+  }
+  12%,
+  88% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(var(--scan-distance, 360px));
+    opacity: 0;
+  }
+}
+@keyframes rb-marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+@keyframes rb-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.65;
+  }
+  80%,
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+@keyframes rb-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes rb-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes rb-fan {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+/* hero: plays once when the page loads (pure CSS, works without JavaScript) */
+.hero-rise {
+  animation: rb-rise 0.8s var(--rb-ease) both;
+  animation-delay: var(--d, 0ms);
+}
+.hero-pop {
+  animation: rb-pop 0.9s var(--rb-ease) both;
+  animation-delay: var(--d, 0ms);
+}
+.float {
+  animation: rb-float 6s ease-in-out infinite;
+  animation-delay: var(--d, 0ms);
+}
+.shap-dot {
+  animation: rb-spread 900ms var(--rb-ease) both;
+  animation-delay: var(--delay);
+}
+.shap-scan {
+  animation: rb-scan 5.5s ease-in-out 1.4s infinite;
+}
+.ping::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: currentColor;
+  animation: rb-ping 2s ease-out infinite;
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: rb-marquee 38s linear infinite;
+}
+.marquee:hover .marquee-track,
+.marquee:focus-within .marquee-track {
+  animation-play-state: paused;
+}
+.spinner {
+  animation: rb-spin 0.8s linear infinite;
+}
+.check-draw path {
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  animation: rb-draw 0.6s 0.15s var(--rb-ease) forwards;
+}
+
+/* Scroll reveal. MotionProvider.tsx adds "motion-ready" to <html> once it is running, so the
+   page stays fully visible if JavaScript fails. data-reveal="up|left|right|zoom", --d = delay.
+   The transition lives on the revealed state only: hiding is instant, showing is animated. */
+.motion-ready [data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 30px, 0);
+}
+.motion-ready [data-reveal='left'] {
+  transform: translate3d(-36px, 0, 0);
+}
+.motion-ready [data-reveal='right'] {
+  transform: translate3d(36px, 0, 0);
+}
+.motion-ready [data-reveal='zoom'] {
+  transform: scale(0.94);
+}
+.motion-ready [data-reveal][data-revealed] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.75s var(--rb-ease),
+    transform 0.75s var(--rb-ease);
+  transition-delay: var(--d, 0ms);
+}
+/* things that animate when their revealed parent appears */
+.motion-ready [data-reveal] .fan i {
+  transform: scaleY(0);
+}
+.motion-ready [data-revealed] .fan i {
+  animation: rb-fan 0.5s var(--rb-ease) both;
+}
+.motion-ready [data-revealed] .fan i:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.motion-ready [data-revealed] .fan i:nth-child(3) {
+  animation-delay: 0.2s;
+}
+/* data-reveal="none": the element itself does not move; it only tells its children when it came into view */
+.motion-ready [data-reveal='none'] {
+  opacity: 1;
+  transform: none;
+}
+/* a line that draws itself from left to right once its parent is in view */
+.motion-ready .draw-line {
+  clip-path: inset(0 100% 0 0);
+}
+.motion-ready [data-revealed] > .draw-line {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 1.4s var(--rb-ease) 0.2s;
+}
+
+/* Visitors who ask their device for less motion get a still page */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+  .marquee-track,
+  .aurora,
+  .float,
+  .shap-scan,
+  .ping::before {
+    animation: none !important;
+  }
+  .motion-ready [data-reveal],
+  .motion-ready [data-reveal] .fan i {
+    opacity: 1;
+    transform: none;
+  }
+  .motion-ready .draw-line {
+    clip-path: none;
+  }
+  .tilt {
+    transform: none;
+  }
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
